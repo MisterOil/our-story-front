@@ -19,7 +19,7 @@ const FileUpload: React.FC = () => {
     if (file) {
       try {
         console.log(base64File);
-        const result = await saveStory("storys", { image_data: base64File, title:'', description:'' });
+        const result = await saveStory("storys", { image_data: base64File, title:'t', description:'t' });
         console.log("Upload successful", result);
       } catch (error) {
         console.error("Error uploading file", error);
