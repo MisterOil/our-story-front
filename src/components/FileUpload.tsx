@@ -1,4 +1,3 @@
-// FileUpload.tsx
 import React, { ChangeEvent, useState } from "react";
 import {
   Button,
