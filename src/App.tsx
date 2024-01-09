@@ -1,22 +1,19 @@
-import React from "react";
-import Header from "./components/header";
-import Content from "./components/content";
 import { ThemeProvider } from "@mui/material/styles";
 import "./App.css";
-import theme from "./theme";
+import theme from "./theme/theme";
 import CssBaseline from "@mui/material/CssBaseline";
-import FileUpload from "./components/fileupload";
+import MainPage from "./pages/MainPage";
+import { Provider } from "react-redux";
+import store from "./store/store";
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
-       <CssBaseline />
-      <div className="App">
-        <Header />
-        <FileUpload/>
-        <Content />
-      </div>
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <MainPage />
+      </ThemeProvider>
+    </Provider>
   );
 }
 

@@ -1,44 +1,169 @@
 // FileUpload.tsx
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { Button, Typography } from "@mui/material";
+import React, { ChangeEvent, useState } from "react";
+import {
+  Button,
+  FormControl,
+  InputLabel,
+  Input,
+  Typography,
+  Paper,
+  TextField,
+} from "@mui/material";
+import { useDispatch } from "react-redux";
 import { saveStory } from "../services/apiServices";
+import { fetchStories } from "../slices/storySlice";
+import { AppDispatch } from "../store/store";
+import theme from "../theme/theme";
 
-const FileUpload: React.FC = () => {
+interface Props {
+  handleCloseModal: () => void;
+}
+const FileUpload: React.FC<Props> = ({handleCloseModal}) => {
   const [file, setFile] = useState<File | null>(null);
-  const [base64File, setBase64File] = useState<string>('');
+  const [base64File, setBase64File] = useState<string>("");
+  const [title, setTitle] = useState<string>("");
+  const [description, setDescription] = useState<string>("");
+  const [fileError, setFileError] = useState<boolean>(false);
+  const [titleError, setTitleError] = useState<boolean>(false);
+  const [descriptionError, setDescriptionError] = useState<boolean>(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
-    getBase64(selectedFile, (result) => {
-      return setBase64File(result?.toString() ?? '');
-    });
-    setFile(selectedFile);
+    if (selectedFile && selectedFile.type.startsWith("image/")) {
+      getBase64(selectedFile, (result) => {
+        setBase64File(result?.toString() ?? "");
+      });
+      setFile(selectedFile);
+    } else {
+      console.warn("Invalid file type. Please select an image.");
+      setFile(null);
+    }
+  };
+
+  const handleTitleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  const handleDescriptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setDescription(event.target.value);
   };
 
   const handleUpload = async () => {
-    if (file) {
-      try {
-        console.log(base64File);
-        const result = await saveStory("storys", { image_data: base64File, title:'t', description:'t' });
-        console.log("Upload successful", result);
-      } catch (error) {
-        console.error("Error uploading file", error);
-      }
-    } else {
-      console.warn("No file selected");
+    if (!file || !title || !description) {
+      console.warn("Please fill in all required fields.");
+      !file ? setFileError(true) : setFileError(false);
+      !title ? setTitleError(true) : setTitleError(false);
+      !description ? setDescriptionError(true) : setDescriptionError(false);
+
+      return;
+    }
+
+    try {
+      await saveStory("storys", {
+        image_data: base64File,
+        title,
+        description,
+      });
+      setFile(null);
+      dispatch(fetchStories());
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error uploading file", error);
     }
   };
 
   return (
-    <div>
-      <Typography variant="h6">File Upload</Typography>
-      <input type="file" onChange={handleFileChange} />
-      <Button variant="contained" color="primary" onClick={handleUpload}>
-        Upload
-      </Button>
-    </div>
+    <Paper square={false} sx={{ width: "100%" }} elevation={24}>
+      <FormControl
+        sx={{
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+          marginLeft: "12%",
+          width: "75%",
+        }}
+      >
+        {/* <InputLabel htmlFor="title" error={titleError} shrink>
+          Title
+        </InputLabel> */}
+        <TextField
+          label={"Title"}
+          id="title"
+          type="text"
+          value={title}
+          error={titleError}
+          onChange={handleTitleChange}
+          required
+          helperText={titleError ? "This field is required" : null}
+          variant="standard"
+        />
+      </FormControl>
+
+      <FormControl
+        sx={{
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+          marginLeft: "12%",
+          width: "75%",
+        }}
+      >
+        {/* <InputLabel htmlFor="description" error={descriptionError} shrink>
+          Description
+        </InputLabel> */}
+        <TextField
+          label={"description"}
+          id="description"
+          type="text"
+          value={description}
+          error={descriptionError}
+          onChange={handleDescriptionChange}
+          required
+          helperText={descriptionError ? "This field is required" : null}
+          variant="standard"
+        />
+      </FormControl>
+
+      <FormControl
+        sx={{
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+          marginLeft: "12%",
+          width: "75%",
+        }}
+      >
+        {/* <InputLabel htmlFor="file-upload" error={fileError} shrink>Image</InputLabel> */}
+        <TextField
+          id="file-upload"
+          type="file"
+          error={fileError}
+          onChange={handleFileChange}
+          inputProps={{ accept: "image/*" }}
+          variant="standard"
+          required
+          helperText={fileError ? "Image is required" : null}
+        />
+      </FormControl>
+      <FormControl
+        sx={{
+          marginTop: theme.spacing(2),
+          marginBottom: theme.spacing(2),
+          marginLeft: "10%",
+          width: "75%",
+        }}
+      >
+        <Button variant="contained" color="primary" onClick={handleUpload}>
+          Upload
+        </Button>
+      </FormControl>
+      {/* {file && (
+          <Typography variant="body2" color="textSecondary">
+            Selected file: {file.name}
+          </Typography>
+        )} */}
+    </Paper>
   );
 };
+
 const getBase64 = (file: any, cb: (a: string | ArrayBuffer | null) => void) => {
   let reader = new FileReader();
   reader.readAsDataURL(file);
@@ -48,25 +173,6 @@ const getBase64 = (file: any, cb: (a: string | ArrayBuffer | null) => void) => {
   reader.onerror = function (error) {
     console.log("Error: ", error);
   };
-};
-
-const base64ToArrayBuffer = (base64: string) => {
-  var binaryString = atob(base64);
-  var bytes = new Uint8Array(binaryString.length);
-  for (var i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  return bytes.buffer;
-};
-
-const arrayBufferToBase64 = (buffer: ArrayBufferLike) => {
-  var binary = "";
-  var bytes = new Uint8Array(buffer);
-  var len = bytes.byteLength;
-  for (var i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return window.btoa(binary);
 };
 
 export default FileUpload;

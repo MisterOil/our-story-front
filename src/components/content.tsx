@@ -1,41 +1,58 @@
-import React, { useEffect, useState } from "react";
-import { fetchData } from "../services/apiServices";
+import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 import { Story } from "../type/type";
 import Grid from "@mui/material/Grid";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
+import Box from "@mui/material/Box";
+import CircularProgress from "@mui/material/CircularProgress";
 import Typography from "@mui/material/Typography";
 
 const Content: React.FC = () => {
-  const [data, setData] = useState<Story[]>([]);
-
-  useEffect(() => {
-    const fetchDataFromApi = async () => {
-      try {
-        const result = await fetchData("storys");
-        setData(result);
-        console.log(result)
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    fetchDataFromApi();
-  }, []);
-
+  const { data, status } = useSelector((state: RootState) => state.stories);
   return (
-    <Grid container spacing={2}>
-      {data?.map((story) => {
-        return (
-          <Grid item xs={6} key={story.id} textAlign={"center"} sx={{ mt: 4 }}>
-            <h4>{story.title}</h4>
-            <img src={story.image_data} alt={story.title} width={'25%'} />
-            <p>{story.description}</p>
-            <div>{story.update_date}</div>
-            <div>{story.create_date}</div>
-          </Grid>
-        );
-      })}
-    </Grid>
+    <>
+      {status === "loading" && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            height: "100vh", 
+          }}
+        >
+          <CircularProgress />
+        </Box>
+      )}
+      {status === "failed" && <div>Error fetching data</div>}
+      {status === "succeeded" && (
+        <Grid container spacing={2}>
+          {data.map((story: Story) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={story.id}
+              textAlign={"center"}
+              sx={{ mt: 4 }}
+            >
+              <Typography variant="h6" gutterBottom>
+                {story.title}
+              </Typography>
+              <img
+                src={story.image_data}
+                alt={story.title}
+                width={"100%"}
+                style={{ maxWidth: "100%" }}
+              />
+              <Typography variant="body1" paragraph>
+                {story.description}
+              </Typography>
+            </Grid>
+          ))}
+        </Grid>
+      )}
+    </>
   );
 };
 
