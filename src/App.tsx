@@ -1,10 +1,10 @@
-import { ThemeProvider } from "@mui/material/styles";
-import "./App.css";
-import theme from "./theme/theme";
-import CssBaseline from "@mui/material/CssBaseline";
-import MainPage from "./pages/MainPage";
-import { Provider } from "react-redux";
-import store from "./store/store";
+import { ThemeProvider,  } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import MainPage from './pages/MainPage';
+import { Provider } from 'react-redux';
+import theme from './theme/theme';
+import store from './store/store';
+import './App.css';
 
 function App() {
   return (
