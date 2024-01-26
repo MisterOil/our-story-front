@@ -124,6 +124,7 @@ const FileUpload: React.FC<Props> = ({ handleCloseModal }) => {
             required
             helperText={descriptionError ? "This field is required" : null}
             variant="standard"
+            multiline
           />
         </FormControl>
 
@@ -160,17 +161,18 @@ const FileUpload: React.FC<Props> = ({ handleCloseModal }) => {
         </FormControl>
       </Paper>
       <Backdrop
-        sx={{ color: theme.palette.primary.main, zIndex: (theme) => theme.zIndex.drawer + 1 }}
+        sx={{
+          color: theme.palette.primary.main,
+          zIndex: (theme) => theme.zIndex.drawer + 1,
+        }}
         open={openBackdrop}
       >
         <CircularProgress color="inherit" />
       </Backdrop>
       <Dialog open={saveErr} onClose={() => setSaveErr(false)}>
-        <DialogTitle color={'red'}>{"Error cannot save data."}</DialogTitle>
+        <DialogTitle color={"red"}>{"Error cannot save data."}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Error cannot save data.
-          </DialogContentText>
+          <DialogContentText>Error cannot save data.</DialogContentText>
         </DialogContent>
       </Dialog>
     </>

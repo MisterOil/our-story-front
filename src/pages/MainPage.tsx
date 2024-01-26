@@ -20,7 +20,6 @@ function MainPage() {
   const { data, status } = useSelector((state: RootState) => state.stories);
   const [onOpenImage, setOnOpenImage] = useState<boolean>(false);
   const [showImage, setShowImage] = useState<string>("");
-  const [isErr, setisErr] = useState<boolean>(false);
 
   useEffect(() => {
     dispatch(fetchStories());

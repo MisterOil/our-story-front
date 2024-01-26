@@ -1,9 +1,8 @@
-
-import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
-import { AppBar, Toolbar, Typography, Modal } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import React, { useState } from 'react';
-import FileUpload from './FileUpload';
+import ControlPointOutlinedIcon from "@mui/icons-material/ControlPointOutlined";
+import { AppBar, Toolbar, Typography, Modal } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import React, { useState } from "react";
+import FileUpload from "./FileUpload";
 
 const Header: React.FC = () => {
   const [modalOpen, setModalOpen] = useState<boolean>(false);
@@ -17,29 +16,37 @@ const Header: React.FC = () => {
   };
 
   return (
-    <AppBar position='static' color='primary'>
+    <AppBar position="static" color="primary">
       <Toolbar
         sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
         <Typography
-          variant='h3'
-          component='div'
+          variant="h3"
+          component="div"
           sx={{
-            fontFamily: 'Schoolbell, cursive',
+            fontFamily: "Schoolbell, cursive",
             flexGrow: 1,
-            textAlign: 'center',
+            textAlign: "center",
           }}
         >
           Our Story
         </Typography>
-        <IconButton size='large' onClick={handleOpenModal}>
-          <ControlPointOutlinedIcon fontSize='inherit' />
+        <IconButton size="large" onClick={handleOpenModal}>
+          <ControlPointOutlinedIcon fontSize="inherit" />
         </IconButton>
-        <Modal open={modalOpen} onClose={handleCloseModal} sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Modal
+          open={modalOpen}
+          onClose={handleCloseModal}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <div>
             <FileUpload handleCloseModal={handleCloseModal} />
           </div>
